@@ -9,9 +9,6 @@ import setuptools
 with open("README.md") as fh:
     long_description = fh.read().strip()
 
-with open('requirements.txt') as fh:
-    requirements = fh.read().strip().split('\n')
-
 setuptools.setup(
     name='Flask-Parcel',
     version='0.0.1',
@@ -25,7 +22,7 @@ setuptools.setup(
     zip_safe=False,
     include_package_data=True,
     platforms='any',
-    install_requires=requirements,
+    install_requires=['Flask'],
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
