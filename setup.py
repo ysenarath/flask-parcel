@@ -21,7 +21,7 @@ setuptools.setup(
     author_email='ysenarath.93@gmail.com',
     description='Run parcel builds alongside flask.',
     long_description=long_description,
-    py_modules=['flask_sqlite3'],
+    py_modules=['flask_parcel'],
     zip_safe=False,
     include_package_data=True,
     platforms='any',
