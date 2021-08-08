@@ -1,6 +1,8 @@
 import os
+import shutil
 import subprocess
 import flask
+import jinja2
 from flask import Blueprint
 
 __all__ = [
@@ -16,8 +18,8 @@ class Parcel:
         self.out_dir = out_dir
         self.url_prefix = url_prefix
         self.blueprint = Blueprint(
-            name, import_name, url_prefix=self.url_prefix, static_folder=self.out_dir,
-            static_url_path='/', template_folder=self.template_folder
+            name, import_name, url_prefix=self.url_prefix,
+            static_folder=self.out_dir, static_url_path='/'
         )
         self.app = app
         if app is not None:
@@ -43,14 +45,28 @@ class Parcel:
     def out_dir(self, value):
         self._out_dir = os.path.abspath(value)
 
-    def build(self, *inputs):
+    def clean(self):
+        if os.path.exists(self.out_dir):
+            shutil.rmtree(self.out_dir)
+
+    def build(self, inputs, clean=True):
+        if clean:
+            self.clean()
+        if not isinstance(inputs, list):
+            inputs = [inputs]
         input_files = (os.path.join(self.template_folder, _input) for _input in inputs)
-        args = ('parcel', 'build', *input_files, '-d', self.out_dir, '--public-url', self.url_prefix)
+        args = ('parcel', 'build', *input_files, '-d', self.out_dir, '--public-url', self.url_prefix, '--no-minify')
         _parcel = subprocess.run(args)
 
-    def render_template(self, path, *args, **kwargs):
-        input_path = os.path.join(self.out_dir, path)
-        if os.path.exists(input_path):
-            with open(input_path, 'r', encoding='utf-8') as fp:
-                return flask.render_template_string(fp.read(), **kwargs)
-        return flask.render_template(*args, **kwargs)
+    def render_template(self, name, *args, **kwargs):
+        template = self._jinja_env.get_template(name)
+        return template.render(*args, **kwargs)
+
+    @property
+    def _jinja_env(self):
+        if not hasattr(self, '_prop_jinja_env'):
+            self._prop_jinja_env = jinja2.Environment(
+                loader=jinja2.FileSystemLoader(self.out_dir),
+                autoescape=jinja2.select_autoescape()
+            )
+        return self._prop_jinja_env
