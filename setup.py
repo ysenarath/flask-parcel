@@ -4,8 +4,7 @@ Flask-Parcel
 
 ParcelJS Extension for Flask
 """
-
-from setuptools import setup
+import setuptools
 
 with open("README.md") as fh:
     long_description = fh.read().strip()
@@ -13,7 +12,7 @@ with open("README.md") as fh:
 with open('requirements.txt') as fh:
     requirements = fh.read().strip().split('\n')
 
-setup(
+setuptools.setup(
     name='Flask-Parcel',
     version='0.0.1',
     url='https://github.com/ysenarath/flask-parcel',
@@ -30,7 +29,7 @@ setup(
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
+        "License :: OSI Approved :: MIT License",
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
