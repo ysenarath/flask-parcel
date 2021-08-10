@@ -1,18 +1,18 @@
 import flask
+from flask_parcel import Parcel
 from flask import Flask
 
-from flask_parcel import Parcel
+app = Flask(__name__)
+
+# ----------------------------------------------------------------------------------------------------------------------
 
 parcel = Parcel()
 
-parcel.build(inputs=[
-    'partials/header.html',
-    'index.html',
-])
+parcel.add_input(inputs=['partials/header.html', 'index.html'])
 
-# app
+parcel.build()
 
-app = Flask(__name__)
+# ----------------------------------------------------------------------------------------------------------------------
 
 parcel.init_app(app)
 

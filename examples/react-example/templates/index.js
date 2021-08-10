@@ -1,7 +1,42 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 
+// import the bootstrap
 import * as bootstrap from 'bootstrap';
+
+// import the echarts core module
+import * as echarts from 'echarts';
+
+window.onload = function () {
+    const canvas = document.getElementById('chart');
+
+    const myChart = echarts.init(canvas);
+
+    window.onresize = function () {
+        setTimeout(function () {
+            // Resize chart
+            myChart.resize();
+        }, 200);
+    }
+
+    const option = {
+        xAxis: {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [{
+            data: [150, 230, 224, 218, 135, 147, 260],
+            type: 'line'
+        }]
+    };
+
+    if (option && typeof option === 'object') {
+        myChart.setOption(option);
+    }
+}
 
 class Welcome extends React.Component {
     constructor(props) {
