@@ -1,7 +1,6 @@
 import os
 import shutil
 import subprocess
-import flask
 import jinja2
 from flask import Blueprint
 
@@ -21,11 +20,14 @@ class Parcel:
             name, import_name, url_prefix=self.url_prefix,
             static_folder=self.out_dir, static_url_path='/'
         )
+        self._input_files = []
         self.app = app
         if app is not None:
             self.init_app(app)
 
     def init_app(self, app):
+        if app.debug:
+            self.blueprint.route('/build')(self.build)
         app.register_blueprint(self.blueprint)
         self.app = app
 
@@ -49,14 +51,24 @@ class Parcel:
         if os.path.exists(self.out_dir):
             shutil.rmtree(self.out_dir)
 
-    def build(self, inputs, clean=True):
-        if clean:
-            self.clean()
+    def add_input(self, inputs):
         if not isinstance(inputs, list):
             inputs = [inputs]
-        input_files = (os.path.join(self.template_folder, _input) for _input in inputs)
-        args = ('parcel', 'build', *input_files, '-d', self.out_dir, '--public-url', self.url_prefix, '--no-minify')
+        self._input_files += [os.path.join(self.template_folder, _input) for _input in inputs]
+
+    def build(self, clean=True):
+        if os.path.exists(self.out_dir) and (not clean):
+            return
+        if os.path.exists(self.out_dir):
+            self.clean()
+        minify = True
+        args = ('parcel', 'build', *self._input_files, '-d', self.out_dir, '--public-url', self.url_prefix,
+                *(['--no-minify'] if not minify else []))
         _parcel = subprocess.run(args)
+        return {
+            'status': 'success',
+            'data': {}
+        }
 
     def render_template(self, name, *args, **kwargs):
         template = self._jinja_env.get_template(name)
