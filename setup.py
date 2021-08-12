@@ -11,7 +11,7 @@ with open("README.md") as fh:
 
 setuptools.setup(
     name='Flask-Parcel',
-    version='0.0.2',
+    version='0.0.3',
     url='https://github.com/ysenarath/flask-parcel',
     license='MIT',
     author='Yasas Senarath',
