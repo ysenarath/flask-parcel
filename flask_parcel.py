@@ -8,6 +8,16 @@ __all__ = [
     'Parcel',
 ]
 
+PARCEL_TEMPLATE = '''
+<div style="position: absolute; bottom: 10px; right: 10px;">
+    <button style="background-color: transparent; border: none; padding: 0; margin: 0;"
+            onclick="fetch('{url_prefix}/build')
+            .then(response => response.json())
+            .then(data => window.location.reload());">⟳
+    </button>
+</div>
+'''
+
 
 class Parcel:
     def __init__(self, app=None, name='Parcel', import_name='parcel', url_prefix='/parcel',
@@ -72,13 +82,19 @@ class Parcel:
 
     def render_template(self, name, *args, **kwargs):
         template = self._jinja_env.get_template(name)
-        return template.render(*args, **kwargs)
+        if self.app.debug:
+            parcel_template = PARCEL_TEMPLATE.format(url_prefix=self.url_prefix)
+            return template.render(*args, **kwargs) + parcel_template
+        else:
+            return template.render(*args, **kwargs)
 
     @property
     def _jinja_env(self):
         if not hasattr(self, '_prop_jinja_env'):
             self._prop_jinja_env = jinja2.Environment(
                 loader=jinja2.FileSystemLoader(self.out_dir),
-                autoescape=jinja2.select_autoescape()
+                autoescape=jinja2.select_autoescape(),
+
             )
+            self._prop_jinja_env.globals['parcel'] = self
         return self._prop_jinja_env
