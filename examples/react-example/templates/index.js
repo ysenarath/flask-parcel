@@ -44,7 +44,7 @@ class Welcome extends React.Component {
         this.state = {
             error: null,
             isLoaded: false,
-            name: 'Unknown Two'
+            name: 'Unknown'
         };
     }
 
@@ -68,7 +68,7 @@ class Welcome extends React.Component {
     }
 
     render() {
-        return <h1>Hello, {this.state.name}</h1>;
+        return <h1>Hello {this.state.name}</h1>;
     }
 }
 
